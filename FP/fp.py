@@ -11,7 +11,7 @@ import os
 #Spotify
 
 cid = os.environ.get('SPOTIFY_CLIENT_ID') # client id
-cs = os.environ.get('SPOTIFY_CLIENT_SECRET') # client secret 
+cs = os.environ.get('SPOTIFY_CLIENT_SECRET') # client secret
 ru = 'https://www.google.com/'
 
 # get the right scope
