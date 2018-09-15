@@ -7,14 +7,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 import os
-print(os.environ['SPOTIFY_CLIENT_ID'])
-
-#Darksky
-#c36a701b3a60419e3f156bc344c17706 - api_key
 
 #Spotify
-cid = SPOTIFY_CLIENT_ID # client id
-cs = SPOTIFY_CLIENT_SECRET # client secret
+
+cid = os.environ.get('SPOTIFY_CLIENT_ID') # client id d32df7804fa24bd4ac44ea08aa8db7b1
+cs = os.environ.get('SPOTIFY_CLIENT_SECRET') # client secret d7b15d31b66c4e73ad9e1309a809bff9
 ru = 'https://www.google.com/'
 
 # get the right scope
