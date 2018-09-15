@@ -45,7 +45,8 @@ if token:
         #get the playlist id everything after the last slash
         fullPLID = playlist['external_urls']['spotify']
         #playlist ID has all the ids of my playlists
-        playlistID.append(fullPLID.split('playlist/')[1])
+        if '6Kg60sZnkqgxjxUnBkmXpO' not in fullPLID:
+            playlistID.append(fullPLID.split('playlist/')[1])
 
     # go into each playlist and put the track ids into a lsit
     idList = []
@@ -59,21 +60,34 @@ if token:
             count = count + 1
     # idList now has a lot of good song ids
 
-    # need to do analysis on all the songs in the list
-    audioA = sp.audio_features(idList[0:50])
-    #print(audioA)
-
     features = []
+    #print(audioA)
     # features will have a dict for each song with the audio features
-    for track in audioA:
-        features.append(track)
-        #adds a target feature to each track
-        features[-1]['target'] = 1
-
-    print(features)
+    for i in range(0,len(idList),50):
+        audioA = sp.audio_features(idList[0:50])
+        for track in audioA:
+            features.append(track)
+            #adds a target feature to each track
+            features[-1]['target'] = 1
 
 # make an id list with bad songs
 # add them to features with target zero
+    badidList = []
+    # track info for bad playlist
+    badTracks = sp.user_playlist(userID,'6Kg60sZnkqgxjxUnBkmXpO')['tracks']
+    count = 0
+    # goes through all the tracks and puts the id in idlist
+    while count < len(badTracks['items']):
+        badidList.append(badTracks['items'][count]['track']['id'])
+        count = count + 1
+
+    for i in range(0,len(badidList),50):
+        audioB = sp.audio_features(badidList[0:50])
+        for track in audioB:
+            features.append(track)
+            #adds a target feature to each track
+            features[-1]['target'] = 0
+
 
 else:
     print ("Can't get token for", username)
