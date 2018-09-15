@@ -6,14 +6,15 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
-
+import os
+print(os.environ['SPOTIFY_CLIENT_ID'])
 
 #Darksky
 #c36a701b3a60419e3f156bc344c17706 - api_key
 
 #Spotify
-cid = 'd32df7804fa24bd4ac44ea08aa8db7b1' # client id
-cs = 'd7b15d31b66c4e73ad9e1309a809bff9' # client secret
+cid = SPOTIFY_CLIENT_ID # client id
+cs = SPOTIFY_CLIENT_SECRET # client secret
 ru = 'https://www.google.com/'
 
 # get the right scope
@@ -61,7 +62,7 @@ if token:
             count = count + 1
     # idList now has a lot of good song ids
 
-    # need to do analysis on all the songs in the list 
+    # need to do analysis on all the songs in the list
     audioA = sp.audio_features(idList[0:50])
     #print(audioA)
 
