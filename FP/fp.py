@@ -88,6 +88,23 @@ if token:
             #adds a target feature to each track
             features[-1]['target'] = 0
 
+    trainingData = pd.DataFrame(features)
+
+    train, test = train_test_split(trainingData, test_size = 0.15)
+
+    #Define the set of features that we want to look at
+    features = ["danceability", "loudness", "valence", "energy", "instrumentalness", "acousticness", "key", "speechiness", "duration_ms"]
+    #Split the data into x and y test and train sets to feed them into a bunch of classifiers!
+    x_train = train[features]
+    y_train = train["target"]
+    x_test = test[features]
+    y_test = test["target"]
+
+    c = DecisionTreeClassifier(min_samples_split=100)
+    dt = c.fit(x_train, y_train)
+    y_pred = c.predict(x_test)
+    score = accuracy_score(y_test, y_pred) * 100
+    print("Accuracy using Decision Tree: ", round(score, 1), "%")
 
 else:
     print ("Can't get token for", username)
