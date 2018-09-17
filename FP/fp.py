@@ -7,13 +7,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 import os
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 
 #Spotify
 
 cid = os.environ.get('SPOTIFY_CLIENT_ID') # client id
 cs = os.environ.get('SPOTIFY_CLIENT_SECRET') # client secret
 ru = 'https://www.google.com/'
-
+badPlayListId = '45adBm5TCkkMszbwhKHQNL'
 # get the right scope
 scope = 'playlist-read-private,playlist-read-collaborative,playlist-modify-public'
 
@@ -45,7 +47,7 @@ if token:
         #get the playlist id everything after the last slash
         fullPLID = playlist['external_urls']['spotify']
         #playlist ID has all the ids of my playlists
-        if '45adBm5TCkkMszbwhKHQNL' not in fullPLID:
+        if badPlayListId not in fullPLID:
             playlistID.append(fullPLID.split('playlist/')[1])
 
     def get_playlist_tracks(username,playlist_id):
@@ -83,7 +85,7 @@ if token:
 # add them to features with target zero
     badidList = []
     # track info for bad playlist
-    badTracks = get_playlist_tracks(userID,'45adBm5TCkkMszbwhKHQNL')
+    badTracks = get_playlist_tracks(userID,badPlayListId)
     count1 = 0
     # goes through all the tracks and puts the id in idlist
 
@@ -111,13 +113,13 @@ if token:
     x_test = test[features]
     y_test = test["target"]
 
-    from sklearn.ensemble import AdaBoostClassifier
+
     ada = AdaBoostClassifier(n_estimators=100)
     ada.fit(x_train, y_train)
     ada_pred = ada.predict(x_test)
     score = accuracy_score(y_test, ada_pred) * 100
     print("Accuracy using ada: ", round(score, 1), "%")
-    from sklearn.ensemble import GradientBoostingClassifier
+
     gbc = GradientBoostingClassifier(n_estimators=100, learning_rate=.1, max_depth=1, random_state=0)
     gbc.fit(x_train, y_train)
     predicted = gbc.predict(x_test)
