@@ -83,7 +83,8 @@ if token:
         badidList.append(badTracks['items'][count1]['track']['id'])
         count1 = count1 + 1
 
-
+    print(len(badidList))
+    
     for i in range(0,len(badidList),50):
         audioB = sp.audio_features(badidList[0:50])
         for track in audioB:
@@ -109,6 +110,43 @@ if token:
     score = accuracy_score(y_test, y_pred) * 100
     #print("Accuracy using Decision Tree: ", round(score, 1), "%")
 
+    #find a playlist that we should search through
+    newReleases = sp.new_releases('US')
+    newSongs = []
 
+
+    while newReleases['albums']['next']:
+        for release in newReleases['albums']['items']:
+            if(release['album_type'] == 'album'):
+                album = sp.album(release['id'])
+                for track in album['tracks']['items']:
+                    newSongs.append(track)
+
+        newReleases = sp.next(newReleases["albums"])
+
+    newSongIds = []
+    for i in range(len(newSongs)):
+        newSongIds.append(newSongs[i]['id'])
+
+
+    newReleasesFeatures = []
+    j = 0
+    for i in range(0,len(newSongIds),50):
+        audioC = sp.audio_features(newSongIds[0:50])
+        for track in audioC:
+            if(j < len(newSongs)):
+                track['song_title'] = newSongs[j]['name']
+                track['artist'] = newSongs[j]['artists'][0]['name']
+                newReleasesFeatures.append(track)
+                j = j + 1
+
+    newReleasesDataFrame = pd.DataFrame(newReleasesFeatures)
+    pred = c.predict(newReleasesDataFrame[features])
+
+    i = 0
+    for prediction in pred:
+        if(prediction == 1):
+            print("Song: "+newReleasesDataFrame['song_title'][i]+ ", By: "+newReleasesDataFrame['artist'][i])
+        i = i + 1
 else:
     print ("Can't get token for", username)
