@@ -154,15 +154,15 @@ if token:
                 j = j + 1
 
     newReleasesDataFrame = pd.DataFrame(newReleasesFeatures)
-    pred = gbc.predict(newReleasesDataFrame[features])
+    pred = ada.predict(newReleasesDataFrame[features])
 
     i = 0
     checkTheseOut = []
-    
+
     for prediction in pred:
         if(prediction == 1):
             checkTheseOut.append(newReleasesDataFrame['song_title'][i])
-            #print("Song: "+newReleasesDataFrame['song_title'][i]+ ", By: "+newReleasesDataFrame['artist'][i])
+            print("Song: "+newReleasesDataFrame['song_title'][i]+ ", By: "+newReleasesDataFrame['artist'][i])
             #print(i)
         i = i + 1
     print(len(checkTheseOut))
