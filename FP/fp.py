@@ -48,15 +48,23 @@ if token:
         if '45adBm5TCkkMszbwhKHQNL' not in fullPLID:
             playlistID.append(fullPLID.split('playlist/')[1])
 
+    def get_playlist_tracks(username,playlist_id):
+        results = sp.user_playlist_tracks(username,playlist_id)
+        tracks = results['items']
+        while results['next']:
+            results = sp.next(results)
+            tracks.extend(results['items'])
+        return tracks
+
     # go into each playlist and put the track ids into a lsit
     idList = []
     for x in playlistID:
         # track info for playlist x
-        tracks = sp.user_playlist(userID,x)['tracks']
+        tracks = get_playlist_tracks(userID,x)
         count = 0
         # goes through all the tracks and puts the id in idlist
-        while count < len(tracks['items']):
-            idList.append(tracks['items'][count]['track']['id'])
+        while count < len(tracks):
+            idList.append(tracks[count]['track']['id'])
             count = count + 1
     # idList now has a lot of good song ids
 
@@ -75,16 +83,15 @@ if token:
 # add them to features with target zero
     badidList = []
     # track info for bad playlist
-    badTracks = sp.user_playlist(userID,'45adBm5TCkkMszbwhKHQNL')['tracks']
+    badTracks = get_playlist_tracks(userID,'45adBm5TCkkMszbwhKHQNL')
     count1 = 0
     # goes through all the tracks and puts the id in idlist
 
-    while count1 < len(badTracks['items']):
-        badidList.append(badTracks['items'][count1]['track']['id'])
+    while count1 < len(badTracks):
+        badidList.append(badTracks[count1]['track']['id'])
         count1 = count1 + 1
 
-    print(len(badidList))
-    
+
     for i in range(0,len(badidList),50):
         audioB = sp.audio_features(badidList[0:50])
         for track in audioB:
@@ -104,11 +111,18 @@ if token:
     x_test = test[features]
     y_test = test["target"]
 
-    c = DecisionTreeClassifier(min_samples_split=100)
-    dt = c.fit(x_train, y_train)
-    y_pred = c.predict(x_test)
-    score = accuracy_score(y_test, y_pred) * 100
-    #print("Accuracy using Decision Tree: ", round(score, 1), "%")
+    from sklearn.ensemble import AdaBoostClassifier
+    ada = AdaBoostClassifier(n_estimators=100)
+    ada.fit(x_train, y_train)
+    ada_pred = ada.predict(x_test)
+    score = accuracy_score(y_test, ada_pred) * 100
+    print("Accuracy using ada: ", round(score, 1), "%")
+    from sklearn.ensemble import GradientBoostingClassifier
+    gbc = GradientBoostingClassifier(n_estimators=100, learning_rate=.1, max_depth=1, random_state=0)
+    gbc.fit(x_train, y_train)
+    predicted = gbc.predict(x_test)
+    score = accuracy_score(y_test, predicted)*100
+    print("Accuracy using Gbc: ", round(score, 1), "%")
 
     #find a playlist that we should search through
     newReleases = sp.new_releases('US')
@@ -128,7 +142,6 @@ if token:
     for i in range(len(newSongs)):
         newSongIds.append(newSongs[i]['id'])
 
-
     newReleasesFeatures = []
     j = 0
     for i in range(0,len(newSongIds),50):
@@ -141,12 +154,17 @@ if token:
                 j = j + 1
 
     newReleasesDataFrame = pd.DataFrame(newReleasesFeatures)
-    pred = c.predict(newReleasesDataFrame[features])
+    pred = gbc.predict(newReleasesDataFrame[features])
 
     i = 0
+    checkTheseOut = []
+    
     for prediction in pred:
         if(prediction == 1):
-            print("Song: "+newReleasesDataFrame['song_title'][i]+ ", By: "+newReleasesDataFrame['artist'][i])
+            checkTheseOut.append(newReleasesDataFrame['song_title'][i])
+            #print("Song: "+newReleasesDataFrame['song_title'][i]+ ", By: "+newReleasesDataFrame['artist'][i])
+            #print(i)
         i = i + 1
+    print(len(checkTheseOut))
 else:
     print ("Can't get token for", username)
