@@ -45,7 +45,7 @@ if token:
         #get the playlist id everything after the last slash
         fullPLID = playlist['external_urls']['spotify']
         #playlist ID has all the ids of my playlists
-        if '6Kg60sZnkqgxjxUnBkmXpO' not in fullPLID:
+        if '45adBm5TCkkMszbwhKHQNL' not in fullPLID:
             playlistID.append(fullPLID.split('playlist/')[1])
 
     # go into each playlist and put the track ids into a lsit
@@ -70,16 +70,19 @@ if token:
             #adds a target feature to each track
             features[-1]['target'] = 1
 
+
 # make an id list with bad songs
 # add them to features with target zero
     badidList = []
     # track info for bad playlist
-    badTracks = sp.user_playlist(userID,'6Kg60sZnkqgxjxUnBkmXpO')['tracks']
-    count = 0
+    badTracks = sp.user_playlist(userID,'45adBm5TCkkMszbwhKHQNL')['tracks']
+    count1 = 0
     # goes through all the tracks and puts the id in idlist
-    while count < len(badTracks['items']):
-        badidList.append(badTracks['items'][count]['track']['id'])
-        count = count + 1
+
+    while count1 < len(badTracks['items']):
+        badidList.append(badTracks['items'][count1]['track']['id'])
+        count1 = count1 + 1
+
 
     for i in range(0,len(badidList),50):
         audioB = sp.audio_features(badidList[0:50])
@@ -104,7 +107,8 @@ if token:
     dt = c.fit(x_train, y_train)
     y_pred = c.predict(x_test)
     score = accuracy_score(y_test, y_pred) * 100
-    print("Accuracy using Decision Tree: ", round(score, 1), "%")
+    #print("Accuracy using Decision Tree: ", round(score, 1), "%")
+
 
 else:
     print ("Can't get token for", username)
