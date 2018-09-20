@@ -21,6 +21,12 @@ scope = 'playlist-read-private,playlist-read-collaborative,playlist-modify-publi
 
 username = input("Enter username: ")
 
+badArtists = []
+badPeople = input("Which Artists do you not like? Enter them with commas in between: ")
+badArtists = badPeople.split(',')
+
+
+
 token = util.prompt_for_user_token(username,scope,cid,cs,ru)
 
 # prints out the songs in my saved songs
@@ -136,7 +142,8 @@ if token:
             if(release['album_type'] == 'album'):
                 album = sp.album(release['id'])
                 for track in album['tracks']['items']:
-                    newSongs.append(track)
+                    if track['artists'][0]['name'] not in badArtists:
+                        newSongs.append(track)
 
         newReleases = sp.next(newReleases["albums"])
 
