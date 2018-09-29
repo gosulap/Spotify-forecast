@@ -128,7 +128,7 @@ if token:
 
     gbc = GradientBoostingClassifier(n_estimators=100, learning_rate=.1, max_depth=1, random_state=0)
     gbc.fit(x_train, y_train)
-    predicted = gbc.predict(x_test)
+    predicted = ada.predict(x_test)
     score = accuracy_score(y_test, predicted)*100
     print("Accuracy using Gbc: ", round(score, 1), "%")
 
