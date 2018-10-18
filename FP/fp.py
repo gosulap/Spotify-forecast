@@ -124,13 +124,13 @@ if token:
     ada.fit(x_train, y_train)
     ada_pred = ada.predict(x_test)
     score = accuracy_score(y_test, ada_pred) * 100
-    print("Accuracy using ada: ", round(score, 1), "%")
+    #print("Accuracy using ada: ", round(score, 1), "%")
 
     gbc = GradientBoostingClassifier(n_estimators=100, learning_rate=.1, max_depth=1, random_state=0)
     gbc.fit(x_train, y_train)
     predicted = ada.predict(x_test)
     score = accuracy_score(y_test, predicted)*100
-    print("Accuracy using Gbc: ", round(score, 1), "%")
+    #print("Accuracy using Gbc: ", round(score, 1), "%")
 
     #find a playlist that we should search through
     newReleases = sp.new_releases('US')
