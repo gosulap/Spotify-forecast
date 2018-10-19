@@ -113,7 +113,7 @@ if token:
 
     #Define the set of features that we want to look at
     features = ["danceability", "loudness", "valence", "energy", "instrumentalness", "acousticness", "key", "speechiness", "duration_ms"]
-    #Split the data into x and y test and train sets to feed them into a bunch of classifiers!
+    #Split the data into x and y test and train sets 
     x_train = train[features]
     y_train = train["target"]
     x_test = test[features]
