@@ -1,4 +1,5 @@
 import spotipy
+import trackRetriever
 from spotipy.oauth2 import SpotifyClientCredentials
 import spotipy.util as util
 import sys
@@ -9,6 +10,7 @@ from sklearn.metrics import accuracy_score
 import os
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier
+import trackRetriever
 
 #Spotify
 
@@ -41,40 +43,15 @@ if token:
     takeTwo = fullUserID.split('user/')
     userID = takeTwo[1]
 
-    # makes a playlist in spotify
-    #sp.user_playlist_create(userID,'Test',public=True)
-    #print('We made it')
-
-    playlists = sp.user_playlists(userID)
-    #print(playlists['items'])
-    playlistID = []
-    for playlist in playlists['items']:
-        #take everything after the last / for the playlist id
-        #get the playlist id everything after the last slash
-        fullPLID = playlist['external_urls']['spotify']
-        #playlist ID has all the ids of my playlists
-        if badPlayListId not in fullPLID:
-            playlistID.append(fullPLID.split('playlist/')[1])
-
-    def get_playlist_tracks(username,playlist_id):
-        results = sp.user_playlist_tracks(username,playlist_id)
-        tracks = results['items']
-        while results['next']:
-            results = sp.next(results)
-            tracks.extend(results['items'])
-        return tracks
-
     # go into each playlist and put the track ids into a lsit
-    idList = []
-    for x in playlistID:
-        # track info for playlist x
-        tracks = get_playlist_tracks(userID,x)
-        count = 0
-        # goes through all the tracks and puts the id in idlist
-        while count < len(tracks):
-            idList.append(tracks[count]['track']['id'])
-            count = count + 1
-    # idList now has a lot of good song ids
+    idList = trackRetriever.getTracks("pradhitg",cid,cs,ru)
+   
+    # these are the track in my bad playlist
+    badTracks = trackRetriever.get_playlist_tracks(userID,badPlayListId,sp)
+    
+
+    for track in badTracks:
+        idList.remove(track['track']['id'])
 
     features = []
     #print(audioA)
@@ -90,8 +67,6 @@ if token:
 # make an id list with bad songs
 # add them to features with target zero
     badidList = []
-    # track info for bad playlist
-    badTracks = get_playlist_tracks(userID,badPlayListId)
     count1 = 0
     # goes through all the tracks and puts the id in idlist
 
